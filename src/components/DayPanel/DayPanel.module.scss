@@ -1,0 +1,223 @@
+.dayPanel {
+  padding: 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: dayFade 0.2s ease-out;
+}
+
+@keyframes dayFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dayHeader {
+  margin-bottom: 1.5rem;
+}
+
+.dayNav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dayNavBtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-bg);
+  color: var(--c-text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--c-bg-subtle);
+    border-color: var(--c-border-hover);
+  }
+}
+
+.dayTitleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.dayTitle {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--c-text);
+  margin: 0;
+  text-align: left;
+}
+
+.todayTag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--c-primary);
+  background: var(--c-primary-light);
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.addButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.addBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-bg);
+  color: var(--c-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+    background: var(--c-primary-light);
+  }
+}
+
+.addBtnIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--c-bg-page);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--c-border);
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.emptyTitle {
+  color: var(--c-text-muted);
+  font-weight: 500;
+  margin: 0 0 0.375rem;
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+  color: var(--c-text-placeholder);
+  margin: 0;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dropTarget {
+  border-top: 2px solid var(--c-primary);
+  padding-top: 0.5rem;
+}
+
+.duplicateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin-top: 0.375rem;
+}
+
+.duplicateLabel {
+  font-size: 0.8rem;
+  color: var(--c-text-muted);
+  white-space: nowrap;
+}
+
+.duplicateInput {
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  color: var(--c-text-secondary);
+  outline: none;
+
+  &:focus {
+    border-color: var(--c-primary);
+  }
+}
+
+.duplicateConfirm,
+.duplicateCancel {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duplicateConfirm {
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.duplicateCancel {
+  background: transparent;
+  color: var(--c-text-placeholder);
+
+  &:hover {
+    color: var(--c-danger);
+  }
+}
+
+@media (max-width: 768px) {
+  .dayPanel {
+    padding: 1rem;
+  }
+
+  .dayTitle {
+    font-size: 1.1rem;
+  }
+
+  .addButtons {
+    gap: 0.375rem;
+  }
+
+  .addBtn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}

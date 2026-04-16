@@ -1,0 +1,28 @@
+.notification {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-bg);
+  color: var(--c-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 1100;
+  white-space: nowrap;
+  animation: notifIn 0.25s ease-out;
+}
+
+@keyframes notifIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
