@@ -15,6 +15,7 @@ dist-ssr
 # Claude / AI config
 CLAUDE.md
 .agents
+.claude
 .system-prompt.md
 
 # Editor directories and files
