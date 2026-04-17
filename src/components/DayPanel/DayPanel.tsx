@@ -75,6 +75,7 @@ export function DayPanel() {
           {items.map((item, index) => (
             <div
               key={item.id}
+              className={styles.itemWrap}
               onDragOver={(e) => {
                 e.preventDefault();
                 if (dragItem && dragItem.date === date && dragItem.itemId !== item.id) {

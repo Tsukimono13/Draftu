@@ -27,6 +27,7 @@ export const ContentItemCard = memo(function ContentItemCard({
 }: ContentItemCardProps) {
   const dispatch = useAppDispatch();
   const fileRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
   const media = item.images ?? [];
   const isStory = item.type === "story";
   const [collapsed, setCollapsed] = useState(false);
@@ -49,11 +50,27 @@ export const ContentItemCard = memo(function ContentItemCard({
 
   return (
     <article
+      ref={cardRef}
       className={`${styles.card} ${styles[item.status]} ${removing ? styles.cardRemoving : ""}`}
-      draggable={!removing}
       onDragStart={(e) => {
         e.dataTransfer.effectAllowed = "move";
+        if (cardRef.current) {
+          const rect = cardRef.current.getBoundingClientRect();
+          const offsetX = e.clientX - rect.left;
+          const offsetY = e.clientY - rect.top;
+          e.dataTransfer.setDragImage(cardRef.current, offsetX, offsetY);
+        }
         dispatch(dragActions.startDrag({ date, itemId: item.id }));
+        requestAnimationFrame(() => {
+          if (cardRef.current) cardRef.current.classList.add(styles.cardDragging);
+        });
+      }}
+      onDragEnd={() => {
+        if (cardRef.current) {
+          cardRef.current.draggable = false;
+          cardRef.current.classList.remove(styles.cardDragging);
+        }
+        dispatch(dragActions.endDrag());
       }}
       onAnimationEnd={() => {
         if (removing) {
@@ -63,7 +80,18 @@ export const ContentItemCard = memo(function ContentItemCard({
     >
       <div className={styles.cardHeader}>
         <div className={styles.headerLeft}>
-          <span className={styles.dragHandle} title="Перетащить">⠿</span>
+          <span
+            className={styles.dragHandle}
+            title="Перетащить"
+            onPointerDown={() => {
+              if (removing || !cardRef.current) return;
+              cardRef.current.draggable = true;
+              const reset = () => {
+                if (cardRef.current) cardRef.current.draggable = false;
+              };
+              document.addEventListener("pointerup", reset, { once: true });
+            }}
+          >⠿</span>
           {hasContent && (
             <button
               className={styles.collapseBtn}

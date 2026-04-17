@@ -138,9 +138,14 @@
   gap: 1rem;
 }
 
+.itemWrap {
+  isolation: isolate;
+}
+
 .dropTarget {
-  border-top: 2px solid var(--c-primary);
-  padding-top: 0.5rem;
+  outline: 2px dashed var(--c-primary);
+  outline-offset: -2px;
+  border-radius: var(--r-lg);
 }
 
 .duplicateRow {
