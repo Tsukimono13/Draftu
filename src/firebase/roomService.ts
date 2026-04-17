@@ -44,8 +44,11 @@ function normalizeState(raw: CalendarState): CalendarState {
   };
 }
 
-export async function writeRoomState(roomId: string, state: CalendarState): Promise<void> {
-  if (!db) return;
+export async function writeRoomState(roomId: string, state: CalendarState): Promise<boolean> {
+  if (!db) {
+    console.error("Firebase not configured");
+    return false;
+  }
   try {
     const roomRef = ref(db, `rooms/${roomId}`);
     await set(roomRef, {
@@ -53,8 +56,10 @@ export async function writeRoomState(roomId: string, state: CalendarState): Prom
       writerId: SESSION_ID,
       updatedAt: Date.now(),
     } satisfies RoomData);
+    return true;
   } catch (e) {
     console.error("Firebase write error:", e);
+    return false;
   }
 }
 

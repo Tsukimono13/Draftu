@@ -41,7 +41,7 @@ export function MainPage() {
   const [roomId, setRoomId] = useState<string | null>(getRoomFromUrl);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useRoomSync(roomId);
+  const roomLoading = useRoomSync(roomId);
 
   // Auto-dismiss initial status
   useEffect(() => {
@@ -138,11 +138,19 @@ export function MainPage() {
         onJoinRoom={handleJoinRoom}
         onLeaveRoom={handleLeaveRoom}
       />
-      <Calendar />
-      <DayPanel key={selectedDate} />
-      <GridPreview />
-      <HashtagManager />
-      <NotesPanel />
+      {roomLoading ? (
+        <div style={{ textAlign: "center", padding: "3rem", color: "var(--c-text-placeholder)" }}>
+          Загрузка комнаты...
+        </div>
+      ) : (
+        <>
+          <Calendar />
+          <DayPanel key={selectedDate} />
+          <GridPreview />
+          <HashtagManager />
+          <NotesPanel />
+        </>
+      )}
       {statusMsg && <StatusNotification message={statusMsg} />}
       {showResetConfirm && (
         <ConfirmModal
