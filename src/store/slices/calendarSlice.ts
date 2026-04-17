@@ -260,6 +260,10 @@ const calendarSlice = createSlice({
       state.selectedDate = today();
       state.lastUpdated = now();
     },
+
+    replaceState(_state, action: PayloadAction<CalendarState>) {
+      return action.payload;
+    },
   },
 });
 

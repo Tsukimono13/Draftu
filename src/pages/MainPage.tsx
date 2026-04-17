@@ -8,6 +8,7 @@ import { HashtagManager } from "../components/HashtagManager/HashtagManager";
 import { Toast } from "../components/Toast/Toast";
 import { StatusNotification } from "../components/StatusNotification/StatusNotification";
 import { ConfirmModal } from "../components/ConfirmModal/ConfirmModal";
+import { RoomBar } from "../components/RoomBar/RoomBar";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { calendarActions } from "../store/slices/calendarSlice";
 import { uiActions } from "../store/slices/uiSlice";
@@ -15,6 +16,12 @@ import { selectSelectedDate, selectWeekItemCount, selectWeekSummary, selectToast
 import { setStorageErrorHandler } from "../store/store";
 import { createShareHash } from "../utils/encoding";
 import { getWeekDays } from "../utils/dateHelpers";
+import { useRoomSync } from "../hooks/useRoomSync";
+
+function getRoomFromUrl(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("room");
+}
 
 export function MainPage() {
   const dispatch = useAppDispatch();
@@ -26,16 +33,22 @@ export function MainPage() {
   const weekCount = useAppSelector((state) => selectWeekItemCount(state, weekDays));
   const weekSummary = useAppSelector((state) => selectWeekSummary(state, weekDays));
 
-  const [statusMsg, setStatusMsg] = useState("");
+  const hasHash = typeof window !== "undefined" && window.location.hash.length > 1;
+  const [statusMsg, setStatusMsg] = useState(
+    hasHash ? "Загружено из общей ссылки. Все изменения сохраняются локально." : "",
+  );
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [roomId, setRoomId] = useState<string | null>(getRoomFromUrl);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  useRoomSync(roomId);
+
+  // Auto-dismiss initial status
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash.length > 1) {
-      showStatus("Загружено из общей ссылки. Все изменения сохраняются локально.");
+    if (hasHash) {
+      timerRef.current = setTimeout(() => setStatusMsg(""), 4000);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hasHash]);
 
   const showStatus = (msg: string) => {
     setStatusMsg(msg);
@@ -52,12 +65,46 @@ export function MainPage() {
     setStorageErrorHandler(showError);
   }, [showError]);
 
+  const updateRoomUrl = (id: string | null) => {
+    const url = new URL(window.location.href);
+    if (id) {
+      url.searchParams.set("room", id);
+    } else {
+      url.searchParams.delete("room");
+    }
+    url.hash = "";
+    window.history.replaceState(null, "", url.toString());
+  };
+
+  const handleCreateRoom = (id: string) => {
+    setRoomId(id);
+    updateRoomUrl(id);
+    showStatus(`Комната создана: ${id}`);
+  };
+
+  const handleJoinRoom = (id: string) => {
+    setRoomId(id);
+    updateRoomUrl(id);
+    showStatus(`Подключено к комнате: ${id}`);
+  };
+
+  const handleLeaveRoom = () => {
+    setRoomId(null);
+    updateRoomUrl(null);
+    showStatus("Вы вышли из комнаты");
+  };
+
   const handleCopyLink = async () => {
     try {
-      const shareHash = createShareHash(calendarState);
-      const shareLink = `${window.location.origin}${window.location.pathname}${shareHash}`;
-      await navigator.clipboard.writeText(shareLink);
-      window.history.replaceState(null, "", shareHash);
+      if (roomId) {
+        const url = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+        await navigator.clipboard.writeText(url);
+      } else {
+        const shareHash = createShareHash(calendarState);
+        const shareLink = `${window.location.origin}${window.location.pathname}${shareHash}`;
+        await navigator.clipboard.writeText(shareLink);
+        window.history.replaceState(null, "", shareHash);
+      }
       showStatus("Ссылка скопирована");
     } catch {
       showStatus("Не удалось скопировать ссылку");
@@ -71,7 +118,7 @@ export function MainPage() {
   const confirmReset = () => {
     setShowResetConfirm(false);
     dispatch(calendarActions.resetCalendar());
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && !roomId) {
       window.history.replaceState(null, "", window.location.pathname);
     }
     showStatus("План очищен");
@@ -84,6 +131,12 @@ export function MainPage() {
         weekSummary={weekSummary}
         onCopyLink={handleCopyLink}
         onReset={handleReset}
+      />
+      <RoomBar
+        roomId={roomId}
+        onCreateRoom={handleCreateRoom}
+        onJoinRoom={handleJoinRoom}
+        onLeaveRoom={handleLeaveRoom}
       />
       <Calendar />
       <DayPanel key={selectedDate} />
