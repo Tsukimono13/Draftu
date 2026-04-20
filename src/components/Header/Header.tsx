@@ -9,11 +9,10 @@ import styles from "./Header.module.scss";
 interface HeaderProps {
   weekCount: number;
   weekSummary: WeekSummaryDay[];
-  onCopyLink: () => void;
   onReset: () => void;
 }
 
-export function Header({ weekCount, weekSummary, onCopyLink, onReset }: HeaderProps) {
+export function Header({ weekCount, weekSummary, onReset }: HeaderProps) {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = useCallback(() => setShowPopup(false), []);
   const popupRef = useOutsideClick<HTMLDivElement>(closePopup, showPopup);
@@ -37,9 +36,6 @@ export function Header({ weekCount, weekSummary, onCopyLink, onReset }: HeaderPr
             </div>
           )}
           <div className={styles.headerActions}>
-            <button className={styles.headerBtn} onClick={onCopyLink}>
-              Поделиться
-            </button>
             <button
               className={`${styles.headerBtn} ${styles.headerBtnOutline}`}
               onClick={onReset}

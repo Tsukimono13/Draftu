@@ -14,7 +14,6 @@ import { calendarActions } from "../store/slices/calendarSlice";
 import { uiActions } from "../store/slices/uiSlice";
 import { selectSelectedDate, selectWeekItemCount, selectWeekSummary, selectToastMessage } from "../store/selectors";
 import { setStorageErrorHandler } from "../store/store";
-import { createShareHash } from "../utils/encoding";
 import { getWeekDays } from "../utils/dateHelpers";
 import { useRoomSync } from "../hooks/useRoomSync";
 
@@ -27,8 +26,6 @@ export function MainPage() {
   const dispatch = useAppDispatch();
   const selectedDate = useAppSelector(selectSelectedDate);
   const toastMsg = useAppSelector(selectToastMessage);
-  const calendarState = useAppSelector((state) => state.calendar);
-
   const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate]);
   const weekCount = useAppSelector((state) => selectWeekItemCount(state, weekDays));
   const weekSummary = useAppSelector((state) => selectWeekSummary(state, weekDays));
@@ -94,23 +91,6 @@ export function MainPage() {
     showStatus("Вы вышли из комнаты");
   };
 
-  const handleCopyLink = async () => {
-    try {
-      if (roomId) {
-        const url = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-        await navigator.clipboard.writeText(url);
-      } else {
-        const shareHash = createShareHash(calendarState);
-        const shareLink = `${window.location.origin}${window.location.pathname}${shareHash}`;
-        await navigator.clipboard.writeText(shareLink);
-        window.history.replaceState(null, "", shareHash);
-      }
-      showStatus("Ссылка скопирована");
-    } catch {
-      showStatus("Не удалось скопировать ссылку");
-    }
-  };
-
   const handleReset = () => {
     setShowResetConfirm(true);
   };
@@ -129,7 +109,6 @@ export function MainPage() {
       <Header
         weekCount={weekCount}
         weekSummary={weekSummary}
-        onCopyLink={handleCopyLink}
         onReset={handleReset}
       />
       <RoomBar

@@ -30,7 +30,7 @@ export function RoomBar({ roomId, onCreateRoom, onJoinRoom, onLeaveRoom }: RoomB
             navigator.clipboard.writeText(url);
           }}
         >
-          Скопировать ссылку
+          Поделиться
         </button>
         <button className={`${styles.btn} ${styles.btnOutline}`} onClick={onLeaveRoom}>
           Выйти
